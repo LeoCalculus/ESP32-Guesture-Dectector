@@ -43,8 +43,10 @@ extern "C" [[noreturn]] void app_main(void) {
                 mpu6050_data_handler[i] = static_cast<float>(mpu6050_sensor_data[i]) / 16384.0f;
             } else if (i == 3) { // Temperature: convert to °C
                 mpu6050_data_handler[i] = static_cast<float>(mpu6050_sensor_data[i]) / 340.0f + 36.53f;
-            } else { // Gyroscope: convert to °/s
-                mpu6050_data_handler[i] = static_cast<float>(mpu6050_sensor_data[i]) / 131.0f;
+            } else {
+                constexpr float gyro_offset[3] = {-6.9, 0.3, 0.4}; // calibrated to closer to 0 when stationary
+                // Gyroscope: convert to °/s
+                mpu6050_data_handler[i] = static_cast<float>(mpu6050_sensor_data[i]) / 131.0f - gyro_offset[i-4];
             }
         }
         std::cout << std::fixed << std::setprecision(3);
