@@ -5,8 +5,10 @@
 #include <iomanip>
 #include "driver/i2c_master.h"
 #include "I2CSetup.h"
+#include "ble_server.h"
 
 extern "C" [[noreturn]] void app_main(void) {
+    init_bluetooth();
     std::ostringstream oss;
     uint8_t data[2]{};
     i2c_master_bus_handle_t bus_handle;
@@ -50,7 +52,16 @@ extern "C" [[noreturn]] void app_main(void) {
             }
         }
         std::cout << std::fixed << std::setprecision(3);
-        std::cout << "MPU6050 | Accel(g): X=" << std::setw(7) << mpu6050_data_handler[0] 
+        // std::cout << "MPU6050 | Accel(g): X=" << std::setw(7) << mpu6050_data_handler[0] 
+        //           << " Y=" << std::setw(7) << mpu6050_data_handler[1]
+        //           << " Z=" << std::setw(7) << mpu6050_data_handler[2]
+        //           << " | Temp: " << std::setw(6) << mpu6050_data_handler[3] << "°C"
+        //           << " | Gyro(°/s): X=" << std::setw(8) << mpu6050_data_handler[4]
+        //           << " Y=" << std::setw(8) << mpu6050_data_handler[5] 
+        //           << " Z=" << std::setw(8) << mpu6050_data_handler[6] << std::endl;
+        
+        oss.clear(); 
+        oss << "MPU6050 | Accel(g): X=" << std::setw(7) << mpu6050_data_handler[0] 
                   << " Y=" << std::setw(7) << mpu6050_data_handler[1]
                   << " Z=" << std::setw(7) << mpu6050_data_handler[2]
                   << " | Temp: " << std::setw(6) << mpu6050_data_handler[3] << "°C"
@@ -58,6 +69,8 @@ extern "C" [[noreturn]] void app_main(void) {
                   << " Y=" << std::setw(8) << mpu6050_data_handler[5] 
                   << " Z=" << std::setw(8) << mpu6050_data_handler[6] << std::endl;
 
+        send_message_to_client(oss.str().c_str());
+        std::cout << "Message sent via BLE." << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
