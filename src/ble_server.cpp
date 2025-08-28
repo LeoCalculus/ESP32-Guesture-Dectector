@@ -49,7 +49,7 @@ static const uint8_t spp_adv_data[23] = {
     /* Complete List of 16-bit Service Class UUIDs */
     0x03,0x03,0xF0,0xAB,
     /* Complete Local Name in advertising */
-    0x0F,0x09, 'E', 'S', 'P', ' ', 'S', 'P', 'P', ' ', 'S', 'E', 'R','V', 'E', 'R'
+    0x0F,0x09, 'E', 'S', 'P', '_', 'S', 'P', 'P', '_', 'S', 'E', 'R','V', 'E', 'R'
 };
 
 static uint16_t spp_mtu_size = SPP_GATT_MTU_SIZE;

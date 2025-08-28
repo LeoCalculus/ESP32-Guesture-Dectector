@@ -2,3 +2,5 @@
 .vscode
 CMakeFiles
 CMakeCache.txt
+.venv
+sdkconfig.upesy_wroom.old
