@@ -2,6 +2,8 @@ import sys
 from bleak import *
 import asyncio # used for await etc.
 from aioconsole import ainput
+import re 
+import csv
 
 # Based on client
 NAME = "ESP_SPP_SERVER"
@@ -52,10 +54,13 @@ class ESP32BluetoothHandler:
             return False
         
     def notify(self, sender, data):
-        print(f"Notification from {sender}: {data}")
         try:
             message = data.decode('utf-8')
-            print(f"Received: {message}")
+            print(f"Data Received: {message}")
+            extract_result = re.findall(r'\d.\d+', message)
+            with open('src/output.csv', 'a', newline='') as csvfile:
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(extract_result)
         except:
             print(f"Received (hex): {data.hex()}")
         
@@ -119,7 +124,6 @@ async def main():
                 print("Keyboard interrupt received, exiting.")
                 break
             
-            await client.read_data()  # read any incoming data
         
     except Exception as e:
         print("An error occurred:", e)

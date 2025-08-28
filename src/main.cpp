@@ -52,24 +52,15 @@ extern "C" [[noreturn]] void app_main(void) {
             }
         }
         std::cout << std::fixed << std::setprecision(3);
-        // std::cout << "MPU6050 | Accel(g): X=" << std::setw(7) << mpu6050_data_handler[0] 
-        //           << " Y=" << std::setw(7) << mpu6050_data_handler[1]
-        //           << " Z=" << std::setw(7) << mpu6050_data_handler[2]
-        //           << " | Temp: " << std::setw(6) << mpu6050_data_handler[3] << "°C"
-        //           << " | Gyro(°/s): X=" << std::setw(8) << mpu6050_data_handler[4]
-        //           << " Y=" << std::setw(8) << mpu6050_data_handler[5] 
-        //           << " Z=" << std::setw(8) << mpu6050_data_handler[6] << std::endl;
         
         oss.str(""); // clear string, or acculate data leads to memory corruption
         oss.clear();  // this only removes error flags not the content
-        oss << "MPU6050 | Accel(g): X=" << std::setw(7) << mpu6050_data_handler[0] 
-                  << " Y=" << std::setw(7) << mpu6050_data_handler[1]
-                  << " Z=" << std::setw(7) << mpu6050_data_handler[2]
-                  << " | Temp: " << std::setw(6) << mpu6050_data_handler[3] << "°C"
-                  << " | Gyro(°/s): X=" << std::setw(8) << mpu6050_data_handler[4]
-                  << " Y=" << std::setw(8) << mpu6050_data_handler[5] 
-                  << " Z=" << std::setw(8) << mpu6050_data_handler[6] << std::endl;
-
+        oss << "Accel(g): X=" << mpu6050_data_handler[0] 
+            << " Y=" << mpu6050_data_handler[1]
+            << " Z=" << mpu6050_data_handler[2]
+            << " | Gyro(°/s): X=" << mpu6050_data_handler[4]
+            << " Y=" << mpu6050_data_handler[5] 
+            << " Z=" << mpu6050_data_handler[6] << "\n";
         send_message_to_client(oss.str().c_str());
         std::cout << "Message sent via BLE." << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
