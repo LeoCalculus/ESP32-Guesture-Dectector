@@ -60,7 +60,8 @@ extern "C" [[noreturn]] void app_main(void) {
         //           << " Y=" << std::setw(8) << mpu6050_data_handler[5] 
         //           << " Z=" << std::setw(8) << mpu6050_data_handler[6] << std::endl;
         
-        oss.clear(); 
+        oss.str(""); // clear string, or acculate data leads to memory corruption
+        oss.clear();  // this only removes error flags not the content
         oss << "MPU6050 | Accel(g): X=" << std::setw(7) << mpu6050_data_handler[0] 
                   << " Y=" << std::setw(7) << mpu6050_data_handler[1]
                   << " Z=" << std::setw(7) << mpu6050_data_handler[2]
