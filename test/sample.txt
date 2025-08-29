@@ -10,3 +10,6 @@ Data Received: Accel(g): X=0.0678711 Y=-0.0117188 Z=1.10815 | Gyro(°/s): X=-0.4
 Data Received: Accel(g): X=0.0637207 Y=-0.0124512 Z=1.1145 | Gyro(°/s): X=-0.267939 Y=0.203817 Z=0.0274809
 Data Received: Accel(g): X=0.0612793 Y=-0.00927734 Z=1.11548 | Gyro(°/s): X=-0.412977 Y=0.089313 Z=-0.10229
 Data Received: Accel(g): X=0.0651855 Y=-0.00830078 Z=1.11401 | Gyro(°/s): X=-0.321374 Y=0.051145 Z=0.271756
+Data Received: Accel(g): X=-0.0725098 Y=-0.19458 Z=0.981445 | Gyro(°/s): X=-7.99313 Y=-37.0328 Z=110.02
+Data Received: Accel(g): X=-0.0668945 Y=0.00537109 Z=1.10938 | Gyro(°/s): X=73.5565 Y=53.6084 Z=111.142
+Data Received: Accel(g): X=-0.0246582 Y=0.0866699 Z=1.16089 | Gyro(°/s): X=-5.9626 Y=0.822137 Z=47.5237

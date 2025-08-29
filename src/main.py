@@ -19,18 +19,17 @@ class ESP32BluetoothHandler:
         
     # first we scan for devices
     async def scan_for_devices(self):
-        for i in range(3):
+        self.myDevice.clear()
+        for i in range(5):
             devices = await BleakScanner.discover()
             for d in devices:
                 if d.name == NAME:
                     print("Found device:", d)
-                    self.myDevice.append(d)
-                    return self.myDevice[0]
-            if not self.myDevice:
-                print("Device not found, retrying in 2 secs...")
-                await asyncio.sleep(2)
+                    return d  # Return device directly
+            print("Device not found, retrying in 2 secs...")
+            await asyncio.sleep(2)
                 
-        print("Device not found after 3 attempts, exiting.")
+        print("Device not found after 5 attempts, exiting.")
         return None
     
     # after discovery, if we found the device, we connect to it
@@ -57,10 +56,14 @@ class ESP32BluetoothHandler:
         try:
             message = data.decode('utf-8')
             print(f"Data Received: {message}")
-            extract_result = re.findall(r'\d.\d+', message)
             with open('src/output.csv', 'a', newline='') as csvfile:
-                csvwriter = csv.writer(csvfile)
-                csvwriter.writerow(extract_result)
+                if message.strip() == "Next":
+                    csvwriter = csv.writer(csvfile)
+                    csvwriter.writerow([])
+                else:
+                    extract_result = re.findall(r'\d+.\d+', message)
+                    csvwriter = csv.writer(csvfile)
+                    csvwriter.writerow(extract_result)
         except:
             print(f"Received (hex): {data.hex()}")
         
@@ -92,8 +95,13 @@ class ESP32BluetoothHandler:
         
     async def disconnect(self):
         if self.client and self.client.is_connected:
+            try:
+                await self.client.stop_notify(SERVER_READ_UUID)
+            except:
+                pass
             await self.client.disconnect()
             print("Disconnected from device.")
+        self.client = None
             
 async def main():
     client = ESP32BluetoothHandler();

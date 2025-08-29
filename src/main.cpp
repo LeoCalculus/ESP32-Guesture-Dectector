@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 #include <iomanip>
+#include <cstdlib>
 #include "driver/i2c_master.h"
 #include "I2CSetup.h"
 #include "ble_server.h"
@@ -32,37 +33,49 @@ extern "C" [[noreturn]] void app_main(void) {
     int16_t mpu6050_sensor_data[7];
     uint8_t raw_data[14];
     float mpu6050_data_handler[7];
+    int counter_print_times = 0;
+    int print_flag = 0;
+    int case_number = 0;
     while (true) {
-        std::cout << "[Info] Still Alive "<< std::endl;
-        // 7 registers store data in continuous memory each has 2 bytes int
         mpu6050_register_read(mpu_handle, MPU6050_ACCEL_XOUT_H, raw_data, 14);
         for (int i = 0; i < 7; i++) {
-            // Convert raw bytes to signed 16-bit values
             mpu6050_sensor_data[i] = static_cast<int16_t>(raw_data[i * 2] << 8 | raw_data[i * 2 + 1]);
             
-            // Convert to proper units
-            if (i <= 2) { // Accelerometer: convert to g-force
+            if (i <= 2) { // should have unit g
                 mpu6050_data_handler[i] = static_cast<float>(mpu6050_sensor_data[i]) / 16384.0f;
-            } else if (i == 3) { // Temperature: convert to °C
+            } else if (i == 3) { // Temperature °C
                 mpu6050_data_handler[i] = static_cast<float>(mpu6050_sensor_data[i]) / 340.0f + 36.53f;
             } else {
                 constexpr float gyro_offset[3] = {-6.9, 0.3, 0.4}; // calibrated to closer to 0 when stationary
-                // Gyroscope: convert to °/s
+                // Gyroscope °/s
                 mpu6050_data_handler[i] = static_cast<float>(mpu6050_sensor_data[i]) / 131.0f - gyro_offset[i-4];
             }
         }
-        std::cout << std::fixed << std::setprecision(3);
-        
-        oss.str(""); // clear string, or acculate data leads to memory corruption
-        oss.clear();  // this only removes error flags not the content
-        oss << "Accel(g): X=" << mpu6050_data_handler[0] 
-            << " Y=" << mpu6050_data_handler[1]
-            << " Z=" << mpu6050_data_handler[2]
-            << " | Gyro(°/s): X=" << mpu6050_data_handler[4]
-            << " Y=" << mpu6050_data_handler[5] 
-            << " Z=" << mpu6050_data_handler[6] << "\n";
-        send_message_to_client(oss.str().c_str());
-        std::cout << "Message sent via BLE." << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        if (abs(mpu6050_data_handler[4]) > 180 || abs(mpu6050_data_handler[5]) > 180 || abs(mpu6050_data_handler[6]) > 180){
+            print_flag = 1;
+            case_number++;
+        }
+
+        // a trigger for record
+        if (print_flag == 1) { 
+            counter_print_times++;
+            oss.str(""); // clear string, or acculate data leads to memory corruption
+            oss.clear();  // this only removes error flags not the content
+            oss << "Accel(g): X=" << mpu6050_data_handler[0] 
+                << " Y=" << mpu6050_data_handler[1]
+                << " Z=" << mpu6050_data_handler[2]
+                << " | Gyro(°/s): X=" << mpu6050_data_handler[4]
+                << " Y=" << mpu6050_data_handler[5] 
+                << " Z=" << mpu6050_data_handler[6];
+            send_message_to_client(oss.str().c_str());
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            counter_print_times++;
+            if (counter_print_times >= 100) {
+                counter_print_times = 0;
+                print_flag = 0;
+                send_message_to_client("Next");
+            }
+        }
     }
 }
