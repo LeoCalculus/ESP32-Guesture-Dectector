@@ -57,14 +57,18 @@ class ESP32BluetoothHandler:
             message = data.decode('utf-8')
             print(f"Data Received: {message}")
             with open('src/output.csv', 'a', newline='') as csvfile:
+                csvwriter = csv.writer(csvfile)
                 if message.strip() == "Next":
-                    csvwriter = csv.writer(csvfile)
                     csvwriter.writerow([])
                 else:
-                    extract_result = re.findall(r'\d+.\d+', message)
-                    csvwriter = csv.writer(csvfile)
-                    csvwriter.writerow(extract_result)
-        except:
+                    extract_result = re.findall(r'-?\d+\.\d+', message) # fix: there can be negative values
+                    if len(extract_result) == 6:
+                        csvwriter.writerow(extract_result)
+                    else:
+                        print(f"Warning: Expected 6 values, got {len(extract_result)}: {extract_result}")
+                        csvwriter.writerow([''] * 6)
+        except Exception as e:
+            print(f"Error processing data: {e}")
             print(f"Received (hex): {data.hex()}")
         
     async def read_data(self):

@@ -52,7 +52,7 @@ extern "C" [[noreturn]] void app_main(void) {
             }
         }
 
-        if (abs(mpu6050_data_handler[4]) > 180 || abs(mpu6050_data_handler[5]) > 180 || abs(mpu6050_data_handler[6]) > 180){
+        if (abs(mpu6050_data_handler[4]) > 150 || abs(mpu6050_data_handler[5]) > 150 || abs(mpu6050_data_handler[6]) > 150){
             print_flag = 1;
             case_number++;
         }
@@ -62,12 +62,12 @@ extern "C" [[noreturn]] void app_main(void) {
             counter_print_times++;
             oss.str(""); // clear string, or acculate data leads to memory corruption
             oss.clear();  // this only removes error flags not the content
-            oss << "Accel(g): X=" << mpu6050_data_handler[0] 
-                << " Y=" << mpu6050_data_handler[1]
-                << " Z=" << mpu6050_data_handler[2]
-                << " | Gyro(°/s): X=" << mpu6050_data_handler[4]
-                << " Y=" << mpu6050_data_handler[5] 
-                << " Z=" << mpu6050_data_handler[6];
+            oss << std::fixed << std::setprecision(3) << mpu6050_data_handler[0] // X
+                << " " << mpu6050_data_handler[1] // Y
+                << " " << mpu6050_data_handler[2] // Z
+                << " " << mpu6050_data_handler[4] // Gx
+                << " " << mpu6050_data_handler[5] // Gy
+                << " " << mpu6050_data_handler[6];// Gz
             send_message_to_client(oss.str().c_str());
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             counter_print_times++;
