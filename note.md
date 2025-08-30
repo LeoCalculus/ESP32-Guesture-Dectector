@@ -29,3 +29,13 @@ means each example has 50 sampled data and 6 means 6 dimension of acceleration, 
 to feed into model training. After flatting the batch matrix, I should expect a (16, 300) size matrix.
 2. For a gesture detection NN, the hidden layer should be large, at least 3+ layers, so first layer I plane to have layers like: first layer 256 neurons, second layer 128 neurons, third layer 64 neuron, fourth layer 16 neurons, and last layer 4 neurons which correspond to 4 outputs, and for first four layers after the linear transformation, I will apply the ReLU activation function and for the last layer I will use softmax activation function so I can get a probability of four gestures map the expect output will be (16, 4) for 16 examples each example has four column which corresponds to arc, circle, line and others.
 3. The result will compare with actual result which will be coded into one hot code, for example arc the matrix will be like: [1, 0, 0, 0], the loss will be calculated with cross entropy loss function and the backward propagation's required for gradient descent will be proceeded by autograd in PyTorch
+
+---
+
+# Exception records
+When I was training my model using Coursera technic, I found my model suck at 1.386 and the output for probability is 0.25 for all, the cost did not change may be due to learning rate problem and weight problem, I improved the learning rate by 10 times but things did not change, then I went to see the weight, I found if I initialize all weights with 10 times large the loss become normal and converges quickly, this may due to small weights lead to weak signal in NN. 
+
+---
+
+# Final performance
+The model is good at detecting arc and circle, but it has difficulty in detecing linear guestures.
